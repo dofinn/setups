@@ -17,3 +17,6 @@ vim.opt.incsearch = true -- incremental search
 vim.opt.termguicolors = true
 
 vim.g.bigfile_size=1024*1024*1 -- 1M
+
+vim.opt.spelllang = 'en_us'
+vim.opt.spell = true
