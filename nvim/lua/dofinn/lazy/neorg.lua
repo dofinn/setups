@@ -8,6 +8,7 @@ return {
       load = {
         ["core.defaults"] = {},
         ["core.export"] = {},
+        ["core.todo-introspector"] = {},
         ["core.concealer"] = {
           config = {
             folds = false,
