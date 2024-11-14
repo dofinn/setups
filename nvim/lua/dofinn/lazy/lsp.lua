@@ -14,6 +14,12 @@ return {
     },
 
     config = function()
+        vim.api.nvim_create_autocmd("BufWritePre", {
+        buffer = buffer,
+        callback = function()
+            vim.lsp.buf.format { async = false }
+        end
+    })
         local cmp = require('cmp')
         local cmp_lsp = require("cmp_nvim_lsp")
         local capabilities = vim.tbl_deep_extend(
