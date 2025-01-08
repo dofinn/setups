@@ -1,6 +1,7 @@
 return {
   "neovim/nvim-lspconfig",
   dependencies = {
+    "stevearc/conform.nvim",
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
     "hrsh7th/cmp-nvim-lsp",
@@ -14,11 +15,9 @@ return {
   },
 
   config = function()
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = buffer,
-      callback = function()
-        vim.lsp.buf.format { async = false }
-      end
+    require("conform").setup({
+      formatters_by_ft = {
+      }
     })
     local cmp = require('cmp')
     local cmp_lsp = require("cmp_nvim_lsp")
@@ -33,19 +32,31 @@ return {
     require("mason-lspconfig").setup({
       ensure_installed = {
         "lua_ls",
+        "rust_analyzer",
         "gopls",
-        "templ",
-        "tailwindcss",
-        "html",
-        "htmx",
       },
       handlers = {
-        function(server_name) -- default handler (optional)
+        function(server_name)         -- default handler (optional)
           require("lspconfig")[server_name].setup {
             capabilities = capabilities
           }
         end,
 
+        zls = function()
+          local lspconfig = require("lspconfig")
+          lspconfig.zls.setup({
+            root_dir = lspconfig.util.root_pattern(".git", "build.zig", "zls.json"),
+            settings = {
+              zls = {
+                enable_inlay_hints = true,
+                enable_snippets = true,
+                warn_style = true,
+              },
+            },
+          })
+          vim.g.zig_fmt_parse_errors = 0
+          vim.g.zig_fmt_autosave = 0
+        end,
         ["lua_ls"] = function()
           local lspconfig = require("lspconfig")
           lspconfig.lua_ls.setup {
@@ -59,7 +70,6 @@ return {
               }
             }
           }
-          lspconfig.gopls.setup({})
         end,
       }
     })
@@ -69,18 +79,18 @@ return {
     cmp.setup({
       snippet = {
         expand = function(args)
-          require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+          require('luasnip').lsp_expand(args.body)           -- For `luasnip` users.
         end,
       },
       mapping = cmp.mapping.preset.insert({
         ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
         ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
-        ["<C-y>"] = cmp.mapping.complete(),
+        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+        ["<C-Space>"] = cmp.mapping.complete(),
       }),
       sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'luasnip' }, -- For luasnip users.
+        { name = 'luasnip' },         -- For luasnip users.
       }, {
         { name = 'buffer' },
       })
@@ -99,3 +109,4 @@ return {
     })
   end
 }
+
