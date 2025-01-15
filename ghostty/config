@@ -5,3 +5,8 @@ macos-option-as-alt = true
 
 keybind = alt+left=unbind
 keybind = alt+right=unbind
+
+keybind = super+alt+k=goto_split:top
+keybind = super+alt+j=goto_split:bottom
+keybind = super+alt+l=goto_split:right
+keybind = super+alt+h=goto_split:left
