@@ -1,6 +1,5 @@
 require("dofinn.remap")
 require("dofinn.set")
-require("dofinn.lazy_init")
 
 local augroup = vim.api.nvim_create_augroup
 local dofinnGroup = augroup('dofinn', {})
@@ -53,9 +52,9 @@ autocmd('LspAttach', {
   end
 })
 
-vim.g.netrw_browse_split = 0
-vim.g.netrw_banner = 0
-vim.g.netrw_winsize = 25
+-- vim.g.netrw_browse_split = 0
+-- vim.g.netrw_banner = 0
+-- vim.g.netrw_winsize = 25
 
 autocmd("BufWritePre", {
   pattern = "*.go",
