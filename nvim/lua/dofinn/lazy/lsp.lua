@@ -17,6 +17,7 @@ return {
   config = function()
     require("conform").setup({
       formatters_by_ft = {
+        go = { "goimports", "gofmt" },
       }
     })
     local cmp = require('cmp')
