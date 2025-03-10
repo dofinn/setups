@@ -20,3 +20,8 @@ vim.g.bigfile_size=1024*1024*1 -- 1M
 
 vim.opt.spelllang = 'en_us'
 vim.opt.spell = true
+
+if vim.fn.getenv("TERM_PROGRAM") == "ghostty" then
+  vim.opt.title = true
+  vim.opt.titlestring = "%{fnamemodify(getcwd(), ':t')}"
+end
