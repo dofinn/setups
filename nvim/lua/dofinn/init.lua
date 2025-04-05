@@ -78,3 +78,15 @@ autocmd("BufWritePre", {
     vim.lsp.buf.format({ async = false })
   end
 })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  group = dofinnGroup,
+  pattern = { "*.ts", "*.tsx", "*.js", "*.jsx" },
+  callback = function()
+    -- Force formatting synchronously (wait for completion)
+    vim.lsp.buf.format({
+      async = false,
+      timeout_ms = 5000,  -- Increase timeout to 5 seconds for larger files
+    })
+  end,
+})
