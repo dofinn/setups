@@ -3,10 +3,10 @@ font-size = 16
 
 macos-option-as-alt = true
 
-keybind = alt+left=unbind
-keybind = alt+right=unbind
+keybind = shift+ctrl+k=goto_split:top
+keybind = shift+ctrl+j=goto_split:bottom
+keybind = shift+ctrl+l=goto_split:right
+keybind = shift+ctrl+h=goto_split:left
 
-keybind = super+alt+k=goto_split:top
-keybind = super+alt+j=goto_split:bottom
-keybind = super+alt+l=goto_split:right
-keybind = super+alt+h=goto_split:left
+keybind = shift+super+h=previous_tab
+keybind = shift+super+l=next_tab

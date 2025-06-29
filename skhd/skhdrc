@@ -44,8 +44,8 @@ alt - s : yabai -m space --layout stack
 alt - r : yabai -m window --toggle split
 
 # cycle through stack windows
-alt - p : yabai -m window --focus stack.next || yabai -m window --focus south
-alt - n : yabai -m window --focus stack.prev || yabai -m window --focus north
+alt - n : yabai -m window --focus stack.next || yabai -m window --focus south
+alt - m : yabai -m window --focus stack.prev || yabai -m window --focus north
 
 #alt - p : yabai -m query --spaces --space \
 #            | jq -re ".index" \
