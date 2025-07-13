@@ -3,7 +3,7 @@ alt - h : yabai -m window --focus west
 alt - j : yabai -m window --focus south
 alt - k : yabai -m window --focus north
 alt - l : yabai -m window --focus east
-alt - f : yabai -m window --toggle zoom-fullscreen
+#alt - f : yabai -m window --toggle zoom-fullscreen
 
 # change monitor focus
 cmd - 1 : yabai -m display --focus 1
@@ -63,7 +63,7 @@ alt - m : yabai -m window --focus stack.prev || yabai -m window --focus north
 alt - w : yabai -m window --close
 
 # enter fullscreen mode for the focused container
-alt - f : yabai -m window --toggle zoom-fullscreen
+#alt - f : yabai -m window --toggle zoom-fullscreen
 
 # toggle window native fullscreen
 alt + shift - f : yabai -m window --toggle native-fullscreen

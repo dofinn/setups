@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of apps that should pause Stretchly when foregrounded
-WATCH_APPS=("Roam" "zoom.us")
+WATCH_APPS=("Roam" "zoom.us" "Loom")
 
 # Stretchly API endpoints
 PAUSE_URL="http://localhost:8000/pause"

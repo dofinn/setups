@@ -1,7 +1,8 @@
 font-family = "Hack Nerd Font"
-font-size = 16
+font-size = 18
 
-macos-option-as-alt = true
+#macos-option-as-alt = true
+option_as_meta = true
 
 keybind = shift+ctrl+k=goto_split:top
 keybind = shift+ctrl+j=goto_split:bottom
