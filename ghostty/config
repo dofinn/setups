@@ -1,8 +1,7 @@
 font-family = "Hack Nerd Font"
 font-size = 18
 
-#macos-option-as-alt = true
-option_as_meta = true
+macos-option-as-alt = true
 
 keybind = shift+ctrl+k=goto_split:top
 keybind = shift+ctrl+j=goto_split:bottom
@@ -11,3 +10,6 @@ keybind = shift+ctrl+h=goto_split:left
 
 keybind = shift+super+h=previous_tab
 keybind = shift+super+l=next_tab
+
+auto-update-channel = tip
+
