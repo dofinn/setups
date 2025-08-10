@@ -19,6 +19,7 @@ return {
       formatters_by_ft = {
         go = { "goimports", "gofmt" },
         zig = { "zigfmt" },
+        rust = { "rustfmt" },
       }
     })
     local cmp = require('cmp')
@@ -36,6 +37,7 @@ return {
         "lua_ls",
         "gopls",
         "zls",
+        "rust_analyzer",
       },
       handlers = {
         function(server_name)         -- default handler (optional)
@@ -44,6 +46,25 @@ return {
           }
         end,
 
+        rust_analyzer = function()
+          local lspconfig = require("lspconfig")
+          lspconfig.rust_analyzer.setup({
+            capabilities = capabilities,
+            settings = {
+              ["rust-analyzer"] = {
+                cargo = {
+                  allFeatures = true,
+                },
+                checkOnSave = {
+                  command = "clippy",
+                },
+                procMacro = {
+                  enable = true,
+                },
+              },
+            },
+          })
+        end,
         zls = function()
           local lspconfig = require("lspconfig")
           lspconfig.zls.setup({
