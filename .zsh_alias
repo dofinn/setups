@@ -1,0 +1,27 @@
+alias ssh-observability.home='ssh root@observability.home'
+alias ssh-pihole='ssh dom@pihole.home'
+alias ssh-router='ssh dofinn@router.home'
+alias ssh-unifi-downstairs='ssh admin@192.168.0.69'
+alias ssh-unifi-upstairs='ssh admin@192.168.0.65'
+alias ssh-wap='ssh -oHostKeyAlgorithms=+ssh-rsa -oHostKeyAlgorithms=+ssh-dss admin@192.168.0.69'
+alias rZ='exec zsh'
+alias eZ='nvim ~/.zshrc'
+alias k='kubectl'
+alias tf='terraform'
+
+### Dev/VIM
+alias vi='nvim'
+alias vim='nvim'
+alias dvi='nvim -c "split | wincmd j | resize 15 | wincmd k | vsplit | wincmd j | term"'
+
+### Git
+alias gfa='git fetch --all'
+
+### ENVs
+export MAC_SVR01="B4:B5:2F:A9:F6:72"
+
+### SNO
+alias sno-on='osascript ~/src/dofinn/dotfiles/SNO_WoL_On.scpt'
+alias sno-off='osascript ~/src/dofinn/dotfiles/SNO_WoL_Off.scpt'
+alias wol-sno='wakeonlan B4:B5:2F:A9:F6:72 -p 7'
+
