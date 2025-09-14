@@ -115,13 +115,12 @@ setup_symlinks() {
     info "Setting up symbolic links..."
 
     # Remove existing configs and create symlinks
-    declare -A configs=(
-        ["nvim"]="$SETUP_DIR/nvim"
-        ["yabai"]="$SETUP_DIR/yabai"
-        ["skhd"]="$SETUP_DIR/skhd"
-        ["sketchybar"]="$SETUP_DIR/sketchybar"
-        ["ghostty"]="$SETUP_DIR/ghostty"
-    )
+    declare -A configs
+    configs["nvim"]="$SETUP_DIR/nvim"
+    configs["yabai"]="$SETUP_DIR/yabai"
+    configs["skhd"]="$SETUP_DIR/skhd"
+    configs["sketchybar"]="$SETUP_DIR/sketchybar"
+    configs["ghostty"]="$SETUP_DIR/ghostty"
 
     for config in "${!configs[@]}"; do
         target_dir="$CONFIG_DIR/$config"
