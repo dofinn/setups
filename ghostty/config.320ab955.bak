@@ -13,7 +13,3 @@ keybind = shift+super+l=next_tab
 
 auto-update-channel = tip
 
-keybind = shift+enter=text:\x1b\r
-
-keybind = ctrl+k=scroll_page_lines:-1
-keybind = ctrl+j=scroll_page_lines:1

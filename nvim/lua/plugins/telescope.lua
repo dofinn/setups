@@ -3,7 +3,10 @@ return {
 
   --  tag = '0.1.6', -- or, branch = '0.1.x',
 
-  dependencies = { 'nvim-lua/plenary.nvim' },
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope-ui-select.nvim',
+  },
 
   config = function()
     require('telescope').setup({
@@ -18,8 +21,16 @@ return {
           '--smart-case',
           '--hidden'            -- 🔍 Include hidden files
         }
+      },
+      extensions = {
+        ['ui-select'] = {
+          require('telescope.themes').get_dropdown({})
+        }
       }
     })
+
+    -- Load extensions
+    require('telescope').load_extension('ui-select')
 
     local builtin = require('telescope.builtin')
     vim.keymap.set('n', 'z=', builtin.spell_suggest, {})

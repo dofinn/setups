@@ -41,29 +41,13 @@ return {
       },
       handlers = {
         function(server_name)         -- default handler (optional)
+          -- Skip rust_analyzer - rustaceanvim handles it
+          if server_name == "rust_analyzer" then
+            return
+          end
           require("lspconfig")[server_name].setup {
             capabilities = capabilities
           }
-        end,
-
-        rust_analyzer = function()
-          local lspconfig = require("lspconfig")
-          lspconfig.rust_analyzer.setup({
-            capabilities = capabilities,
-            settings = {
-              ["rust-analyzer"] = {
-                cargo = {
-                  allFeatures = true,
-                },
-                checkOnSave = {
-                  command = "clippy",
-                },
-                procMacro = {
-                  enable = true,
-                },
-              },
-            },
-          })
         end,
         zls = function()
           local lspconfig = require("lspconfig")
