@@ -172,6 +172,7 @@ setup_symlinks() {
     home_symlinks["$HOME/.zshrc"]="$SETUP_DIR/.zshrc"
     home_symlinks["$HOME/.zsh_alias"]="$SETUP_DIR/.zsh_alias"
     home_symlinks["$HOME/.tmux.conf"]="$SETUP_DIR/tmux/tmux.conf"
+    home_symlinks["$HOME/.local/bin/tmux-sessionizer"]="$SETUP_DIR/tmux/tmux-sessionizer"
 
     for target in "${!home_symlinks[@]}"; do
         source="${home_symlinks[$target]}"
@@ -192,6 +193,10 @@ setup_symlinks() {
         fi
 
         ln -sf "$source" "$target"
+        # ensure scripts in ~/.local/bin are executable
+        if [[ "$target" == "$HOME/.local/bin/"* ]]; then
+            chmod +x "$source"
+        fi
         success "Linked $(basename "$target")"
     done
 }
