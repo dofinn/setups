@@ -16,11 +16,31 @@ return {
 
   config = function()
     require("conform").setup({
+      formatters = {
+        rustfmt = {
+          command = "rustup",
+          args = { "run", "nightly", "rustfmt", "--edition", "2021", "--" },
+        },
+      },
       formatters_by_ft = {
         go = { "goimports", "gofmt" },
         zig = { "zigfmt" },
         rust = { "rustfmt" },
-      }
+        python = { "ruff_format", "ruff_organize_imports" },
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        json = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
+        html = { "prettier" },
+        css = { "prettier" },
+      },
+      format_on_save = {
+        timeout_ms = 500,
+        lsp_fallback = true,
+      },
     })
     local cmp = require('cmp')
     local cmp_lsp = require("cmp_nvim_lsp")
@@ -37,14 +57,15 @@ return {
         "lua_ls",
         "gopls",
         "zls",
-        "rust_analyzer",
+        "basedpyright",
+        "ruff",
+        -- rust_analyzer removed - rustaceanvim manages it
       },
       handlers = {
+        -- Explicitly disable rust_analyzer - rustaceanvim handles it
+        ["rust_analyzer"] = function() end,
+
         function(server_name)         -- default handler (optional)
-          -- Skip rust_analyzer - rustaceanvim handles it
-          if server_name == "rust_analyzer" then
-            return
-          end
           require("lspconfig")[server_name].setup {
             capabilities = capabilities
           }
@@ -78,6 +99,22 @@ return {
               }
             }
           }
+        end,
+        ["basedpyright"] = function()
+          local lspconfig = require("lspconfig")
+          lspconfig.basedpyright.setup({
+            capabilities = capabilities,
+            settings = {
+              basedpyright = {
+                analysis = {
+                  typeCheckingMode = "basic",  -- "off" | "basic" | "strict"
+                  autoSearchPaths = true,
+                  useLibraryCodeForTypes = true,
+                  diagnosticMode = "workspace",
+                },
+              },
+            },
+          })
         end,
       }
     })

@@ -114,12 +114,11 @@ install_packages() {
 setup_symlinks() {
     info "Setting up symbolic links..."
 
-    # Remove existing configs and create symlinks
+    # ~/.config/* symlinks
     declare -A configs
     configs["nvim"]="$SETUP_DIR/nvim"
     configs["yabai"]="$SETUP_DIR/yabai"
     configs["skhd"]="$SETUP_DIR/skhd"
-    configs["sketchybar"]="$SETUP_DIR/sketchybar"
     configs["ghostty"]="$SETUP_DIR/ghostty"
 
     for config in "${!configs[@]}"; do
@@ -142,6 +141,58 @@ setup_symlinks() {
         else
             warning "$source_dir not found, skipping $config"
         fi
+    done
+
+    # sketchybar: clean up misnamed backup symlink and link correctly
+    local sketchy_target="$CONFIG_DIR/sketchybar"
+    local sketchy_source="$SETUP_DIR/sketchybar"
+    local sketchy_backup="$CONFIG_DIR/sketchybar_backup"
+
+    if [[ -L "$sketchy_backup" ]]; then
+        rm "$sketchy_backup"
+        info "Removed stale sketchybar_backup symlink"
+    fi
+
+    if [[ -d "$sketchy_source" ]]; then
+        if [[ -e "$sketchy_target" && ! -L "$sketchy_target" ]]; then
+            warning "Backing up existing sketchybar configuration..."
+            mv "$sketchy_target" "$sketchy_target.backup.$(date +%Y%m%d_%H%M%S)"
+        elif [[ -L "$sketchy_target" && "$(readlink "$sketchy_target")" == "$sketchy_source" ]]; then
+            success "sketchybar already linked correctly"
+        else
+            ln -sfn "$sketchy_source" "$sketchy_target"
+            success "Linked sketchybar configuration"
+        fi
+    else
+        warning "$sketchy_source not found, skipping sketchybar"
+    fi
+
+    # ~/ symlinks (zshrc, zsh_alias, tmux)
+    declare -A home_symlinks
+    home_symlinks["$HOME/.zshrc"]="$SETUP_DIR/.zshrc"
+    home_symlinks["$HOME/.zsh_alias"]="$SETUP_DIR/.zsh_alias"
+    home_symlinks["$HOME/.tmux.conf"]="$SETUP_DIR/tmux/tmux.conf"
+
+    for target in "${!home_symlinks[@]}"; do
+        source="${home_symlinks[$target]}"
+
+        if [[ ! -f "$source" ]]; then
+            warning "$source not found, skipping $(basename "$target")"
+            continue
+        fi
+
+        if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
+            success "$(basename "$target") already linked correctly"
+            continue
+        fi
+
+        if [[ -e "$target" && ! -L "$target" ]]; then
+            warning "Backing up existing $(basename "$target")..."
+            mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+
+        ln -sf "$source" "$target"
+        success "Linked $(basename "$target")"
     done
 }
 
@@ -203,30 +254,15 @@ install_rust_tools() {
     success "Rust tools installed"
 }
 
-# Setup ZSH additions (preserving existing Zim setup)
+# Check ZSH framework
 setup_zsh() {
-    info "Setting up ZSH additions..."
+    info "Checking ZSH framework..."
 
-    # Check if Zim is already installed
     if [[ -d "$HOME/.zim" ]]; then
         success "Zim framework already installed"
     else
         warning "Zim framework not found - you may want to install it manually"
         info "Visit: https://zimfw.sh/"
-    fi
-
-    # Link additional ZSH configuration
-    if [[ -f "$SETUP_DIR/zsh/.zshrc.local" ]]; then
-        ln -sfn "$SETUP_DIR/zsh/.zshrc.local" "$HOME/.zshrc.local"
-        success "ZSH local configuration linked"
-    else
-        warning "ZSH local configuration not found in setup directory"
-    fi
-
-    # Create .zsh_alias file if it doesn't exist
-    if [[ ! -f "$HOME/.zsh_alias" ]]; then
-        touch "$HOME/.zsh_alias"
-        success "Created .zsh_alias file"
     fi
 }
 

@@ -20,7 +20,24 @@ return {
           '--column',
           '--smart-case',
           '--hidden'            -- 🔍 Include hidden files
-        }
+        },
+        -- Deduplicate LSP results
+        path_display = { "truncate" },
+      },
+      pickers = {
+        lsp_definitions = {
+          trim_text = true,
+          show_line = false,  -- Reduces duplicates from same location
+        },
+        lsp_implementations = {
+          trim_text = true,
+          show_line = false,
+        },
+        lsp_references = {
+          trim_text = true,
+          show_line = false,
+          include_declaration = false,  -- Don't show the declaration in references
+        },
       },
       extensions = {
         ['ui-select'] = {

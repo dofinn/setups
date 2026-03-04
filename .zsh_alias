@@ -7,7 +7,10 @@ alias ssh-wap='ssh -oHostKeyAlgorithms=+ssh-rsa -oHostKeyAlgorithms=+ssh-dss adm
 alias rZ='exec zsh'
 alias eZ='nvim ~/.zshrc'
 alias k='kubectl'
+alias kctx='kubectx'
+alias kns='kubens'
 alias tf='terraform'
+alias j='just'
 
 ### Dev/VIM
 alias vi='nvim'
@@ -25,3 +28,5 @@ alias sno-on='osascript ~/src/dofinn/dotfiles/SNO_WoL_On.scpt'
 alias sno-off='osascript ~/src/dofinn/dotfiles/SNO_WoL_Off.scpt'
 alias wol-sno='wakeonlan B4:B5:2F:A9:F6:72 -p 7'
 
+### git
+alias gbcd='git checkout $(git branch | sed "s/^[* ]*//" | grep "domfinn/" | fzf --preview "git log -3 --color=always --pretty=format:\"%h %s (%cr)\" {} && echo && echo && git diff --name-status --color=always HEAD..{}" --preview-window=right:60% --height 40%)'

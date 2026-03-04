@@ -2,23 +2,20 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter-textobjects",
+    },
     config = function()
-      local configs = require("nvim-treesitter.configs")
-      configs.setup({
+      require("nvim-treesitter.configs").setup({
         ensure_installed = {
-          "lua", "vim", "vimdoc", "javascript", "html", "python", "go", "norg", "terraform", "hcl", "typescript", "zig"
+          "lua", "vim", "vimdoc", "javascript", "html", "python", "go",
+          "norg", "terraform", "hcl", "typescript", "zig", "rust"
         },
         sync_install = false,
         highlight = { enable = true },
         indent = { enable = true },
-      })
-    end
-  },
-  {
-    "nvim-treesitter/nvim-treesitter-textobjects",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    config = function()
-      require("nvim-treesitter.configs").setup({
+
+        -- Textobjects configuration (merged)
         textobjects = {
           move = {
             enable = true,
@@ -52,6 +49,6 @@ return {
           },
         },
       })
-    end,
+    end
   },
 }
