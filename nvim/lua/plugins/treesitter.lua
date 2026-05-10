@@ -6,10 +6,19 @@ return {
       "nvim-treesitter/nvim-treesitter-textobjects",
     },
     config = function()
+      local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
+      parser_configs.norg_meta = {
+        install_info = {
+          url = "https://github.com/nvim-neorg/tree-sitter-norg-meta",
+          files = { "src/parser.c" },
+          branch = "main",
+        },
+      }
+
       require("nvim-treesitter.configs").setup({
         ensure_installed = {
           "lua", "vim", "vimdoc", "javascript", "html", "python", "go",
-          "norg", "terraform", "hcl", "typescript", "zig", "rust"
+          "norg", "norg_meta", "terraform", "hcl", "typescript", "zig", "rust"
         },
         sync_install = false,
         highlight = { enable = true },

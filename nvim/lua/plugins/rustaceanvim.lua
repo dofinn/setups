@@ -18,7 +18,11 @@ return {
         ),
       },
       server = {
-        default_settings = {
+        -- Required: separate RA target dir so it doesn't block cargo commands
+        extraEnv = {
+          CARGO_PROFILE_RUST_ANALYZER_INHERITS = "dev",
+        },
+        settings = {
           ['rust-analyzer'] = {
             -- Detailed inlay hints for maximum insights
             inlayHints = {
@@ -54,36 +58,23 @@ return {
             },
 
             cargo = {
-              allFeatures = true,
-              loadOutDirsFromCheck = true,
-              buildScripts = {
-                enable = false,
-              },
+              allFeatures = false,
             },
             check = {
               command = "clippy",
-              -- Critical for monorepo: only check current package
+              -- Only check current package, not the whole monorepo
+              workspace = false,
               allTargets = false,
               -- Use monorepo rust-analyzer profile (see .cargo/config.toml)
-              extraArgs = {
-                "--profile", "rust-analyzer",
-                "--",
-                "-W", "clippy::needless_range_loop",
-                "-W", "clippy::manual_find",
-                "-W", "clippy::manual_filter",
-                "-W", "clippy::search_is_some",
-                "-W", "clippy::single_char_add_str",
-                "-W", "clippy::map_unwrap_or",
-                "-W", "clippy::unnecessary_fold",
-                "-W", "clippy::redundant_closure",
-                "-W", "clippy::filter_map_next",
-                "-W", "clippy::flat_map_identity",
-                "-W", "clippy::map_flatten",
+              extraArgs = { "--profile", "rust-analyzer" },
+              -- Required: fixes false errors in hydra crates (tokio_taskdump etc.)
+              extraEnv = {
+                RUSTFLAGS = "--cfg tokio_unstable"
               },
             },
-            -- Try disabling proc-macros to stop the spam/memory issue
-            procMacro = {
-              enable = false,  -- Disable proc-macros temporarily to stop the flood
+            linkedProjects = {
+              "Cargo.toml",
+              "sdks/rust/dittolive-ditto/Cargo.toml",
             },
             diagnostics = {
               enable = true,
@@ -113,9 +104,9 @@ return {
         end)
 
         -- Enable inlay hints by default for Rust files
-        if vim.lsp.inlay_hint then
-          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-        end
+        --        if vim.lsp.inlay_hint then
+        --         vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+        --      end
 
         -- Set up code lens auto-refresh
         vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
@@ -192,17 +183,17 @@ return {
 
         vim.keymap.set("n", "<leader>rl", function()
           local clippy_cmd = "cargo clippy -- " ..
-            "-W clippy::needless_range_loop " ..
-            "-W clippy::manual_find " ..
-            "-W clippy::manual_filter " ..
-            "-W clippy::search_is_some " ..
-            "-W clippy::single_char_add_str " ..
-            "-W clippy::map_unwrap_or " ..
-            "-W clippy::unnecessary_fold " ..
-            "-W clippy::redundant_closure " ..
-            "-W clippy::filter_map_next " ..
-            "-W clippy::flat_map_identity " ..
-            "-W clippy::map_flatten"
+              "-W clippy::needless_range_loop " ..
+              "-W clippy::manual_find " ..
+              "-W clippy::manual_filter " ..
+              "-W clippy::search_is_some " ..
+              "-W clippy::single_char_add_str " ..
+              "-W clippy::map_unwrap_or " ..
+              "-W clippy::unnecessary_fold " ..
+              "-W clippy::redundant_closure " ..
+              "-W clippy::filter_map_next " ..
+              "-W clippy::flat_map_identity " ..
+              "-W clippy::map_flatten"
           run_in_terminal(clippy_cmd)
         end, vim.tbl_extend("force", opts, { desc = "Run Clippy (strict)" }))
 
@@ -289,7 +280,7 @@ return {
           end
         end, vim.tbl_extend("force", opts, { desc = "Toggle Inlay Hints" }))
 
-        vim.keymap.set("n", "<leader>rL", function()
+        vim.keymap.set("n", "<leader>rK", function()
           vim.lsp.codelens.run()
         end, vim.tbl_extend("force", opts, { desc = "Run Code Lens" }))
 

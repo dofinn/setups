@@ -37,10 +37,13 @@ return {
         html = { "prettier" },
         css = { "prettier" },
       },
-      format_on_save = {
-        timeout_ms = 500,
-        lsp_fallback = true,
-      },
+      format_on_save = function(bufnr)
+        local ft = vim.bo[bufnr].filetype
+        return {
+          timeout_ms = ft == "rust" and 3000 or 500,
+          lsp_fallback = true,
+        }
+      end,
     })
     local cmp = require('cmp')
     local cmp_lsp = require("cmp_nvim_lsp")

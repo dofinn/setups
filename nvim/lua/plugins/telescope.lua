@@ -72,5 +72,6 @@ return {
     vim.keymap.set('n', '<leader>gi', builtin.lsp_implementations, {})
     vim.keymap.set('n', '<leader>gd', builtin.lsp_definitions, {})
     vim.keymap.set('n', '<leader>gt', builtin.lsp_type_definitions, {})
+    vim.keymap.set('n', '<leader>gr', builtin.lsp_references, {})
   end
 }
