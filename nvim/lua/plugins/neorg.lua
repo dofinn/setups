@@ -3,6 +3,14 @@ return {
   lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
   version = "*", -- Pin Neorg to the latest stable release
   dependencies = { { "nvim-lua/plenary.nvim" }, { "nvim-neorg/neorg-telescope" } },
+  init = function()
+    -- lazy.nvim installs Neorg's parsers as rocks, but does not always add
+    -- transitive rock paths to package.cpath before Neorg checks for them.
+    local rocks = vim.fn.stdpath("data") .. "/lazy-rocks"
+    for _, rock in ipairs({ "tree-sitter-norg", "tree-sitter-norg-meta" }) do
+      package.cpath = package.cpath .. ";" .. rocks .. "/" .. rock .. "/lib/lua/5.1/?.so"
+    end
+  end,
   config = function ()
     require("neorg").setup({
       load = {

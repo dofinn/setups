@@ -173,6 +173,7 @@ setup_symlinks() {
     home_symlinks["$HOME/.zsh_alias"]="$SETUP_DIR/.zsh_alias"
     home_symlinks["$HOME/.tmux.conf"]="$SETUP_DIR/tmux/tmux.conf"
     home_symlinks["$HOME/.local/bin/tmux-sessionizer"]="$SETUP_DIR/tmux/tmux-sessionizer"
+    home_symlinks["$HOME/.local/bin/tmux-open-url"]="$SETUP_DIR/tmux/tmux-open-url"
 
     for target in "${!home_symlinks[@]}"; do
         source="${home_symlinks[$target]}"

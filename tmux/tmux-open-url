@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+
+buffer_name=${1:-tmux-open-url}
+
+trap 'tmux delete-buffer -b "$buffer_name" 2>/dev/null || true' EXIT
+
+selected_url=$(
+    tmux show-buffer -b "$buffer_name" |
+        grep -Eo 'https?://[^[:space:]<>")]+' |
+        awk '{ urls[NR] = $0 } END { for (i = NR; i > 0; i--) print urls[i] }' |
+        awk '!seen[$0]++' |
+        fzf \
+            --layout=reverse \
+            --border \
+            --prompt='Open URL > ' \
+            --no-multi
+) || exit 0
+
+if [[ -n $selected_url ]]; then
+    open "$selected_url"
+fi

@@ -62,19 +62,8 @@ return {
             },
             check = {
               command = "clippy",
-              -- Only check current package, not the whole monorepo
               workspace = false,
               allTargets = false,
-              -- Use monorepo rust-analyzer profile (see .cargo/config.toml)
-              extraArgs = { "--profile", "rust-analyzer" },
-              -- Required: fixes false errors in hydra crates (tokio_taskdump etc.)
-              extraEnv = {
-                RUSTFLAGS = "--cfg tokio_unstable"
-              },
-            },
-            linkedProjects = {
-              "Cargo.toml",
-              "sdks/rust/dittolive-ditto/Cargo.toml",
             },
             diagnostics = {
               enable = true,
