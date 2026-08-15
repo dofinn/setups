@@ -32,7 +32,6 @@ brew "neovim"
 brew "koekeishiya/formulae/yabai"
 brew "koekeishiya/formulae/skhd"
 brew "sketchybar"
-brew "font-hack-nerd-font"
 
 # Development languages
 brew "go"
@@ -41,4 +40,5 @@ brew "node"
 brew "python@3.11"
 
 # Terminal emulator
+cask "font-hack-nerd-font"
 cask "ghostty"
