@@ -10,6 +10,12 @@ statusLine:
   transparent: false
   compactThinkingLevel: false
   showHookStatus: true
+  separator: powerline-thin
+  preset: full
+  leftSegments: 
+    []
+  rightSegments: 
+    []
 terminal: 
   showProgress: false
 tui: 

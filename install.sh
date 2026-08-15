@@ -71,6 +71,25 @@ install_homebrew() {
     success "Homebrew installed"
 }
 
+# Trust non-official Homebrew taps (required before installing from them)
+trust_taps() {
+    info "Trusting Homebrew taps..."
+
+    # Tap repositories first (brew bundle handles this, but trust must come after)
+    brew tap can1357/tap
+    brew tap koekeishiya/formulae
+    brew tap felixkratz/formulae
+
+    # Trust formulae from non-official taps
+    brew trust --formula can1357/tap/omp
+    brew trust --formula koekeishiya/formulae/yabai
+    brew trust --formula koekeishiya/formulae/skhd
+    brew trust --formula felixkratz/formulae/sketchybar
+    brew trust --formula felixkratz/formulae/font-hack-nerd-font
+
+    success "Taps trusted"
+}
+
 # Install packages via Homebrew
 install_packages() {
     info "Installing packages via Homebrew..."
@@ -340,7 +359,7 @@ main() {
 
     check_macos
     create_directories
-    install_homebrew
+    trust_taps
     install_packages
     setup_symlinks
     setup_git

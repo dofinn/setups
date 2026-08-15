@@ -19,13 +19,16 @@
     "red": "#f7768e",
     "red_dark": "#db4b4b",
     "comment": "#565f89",
-    "border": "#3d59a1"
+    "border": "#3d59a1",
+    "bg_input": "#283457",
+    "border_idle": "#7aa2f7",
+    "border_active": "#7aa2f7"
   },
   "colors": {
     "accent": "blue",
     "border": "border",
-    "borderAccent": "magenta",
-    "borderMuted": "fg_gutter",
+    "borderAccent": "border_active",
+    "borderMuted": "border_idle",
     "success": "green",
     "error": "red",
     "warning": "yellow",
@@ -33,9 +36,8 @@
     "dim": "fg_gutter",
     "text": "fg",
     "thinkingText": "fg_dim",
-
     "selectedBg": "bg_statusline",
-    "userMessageBg": "bg_statusline",
+    "userMessageBg": "bg_input",
     "userMessageText": "fg",
     "customMessageBg": "",
     "customMessageText": "fg",
@@ -45,7 +47,6 @@
     "toolErrorBg": "",
     "toolTitle": "blue",
     "toolOutput": "fg_dim",
-
     "mdHeading": "magenta",
     "mdLink": "blue",
     "mdLinkUrl": "comment",
@@ -56,11 +57,9 @@
     "mdQuoteBorder": "border",
     "mdHr": "fg_gutter",
     "mdListBullet": "blue",
-
     "toolDiffAdded": "green",
     "toolDiffRemoved": "red",
     "toolDiffContext": "comment",
-
     "syntaxComment": "comment",
     "syntaxKeyword": "magenta",
     "syntaxFunction": "blue",
@@ -70,7 +69,6 @@
     "syntaxType": "teal",
     "syntaxOperator": "cyan",
     "syntaxPunctuation": "#9aa5ce",
-
     "thinkingOff": 240,
     "thinkingMinimal": 244,
     "thinkingLow": "blue",
@@ -78,10 +76,8 @@
     "thinkingHigh": "magenta",
     "thinkingXhigh": "red",
     "thinkingMax": "#ff007c",
-
     "bashMode": "teal",
     "pythonMode": "magenta",
-
     "statusLineBg": "bg_statusline",
     "statusLineSep": "fg_gutter",
     "statusLineModel": "magenta",
