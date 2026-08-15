@@ -1,3 +1,15 @@
+# Neovim
 nvim/lazy-lock.json
 lazvim.json
 nvim/spell/*
+
+# Secrets — never track machine-specific credentials
+.zshrc.local
+*.local
+secrets*
+.env
+.env.*
+
+# Backups
+*.bak
+*.backup.*

@@ -136,7 +136,8 @@ source ~/.zsh_alias
 export EDITOR=nvim
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 ulimit -n 4096
-export DITTO_LICENSE=$(cat ~/.config/ditto/license)
+# Secrets and machine-specific config (not tracked in git)
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
 #autoload -Uz compinit
 #compinit
 autoload -Uz +X bashcompinit && bashcompinit
@@ -212,6 +213,7 @@ aws-sso-profile() {
     if [ "$AWS_SSO_PROFILE" != "$_profile" ]; then
         return 1
     fi
+    export AWS_PROFILE="$_profile"
 }
 
 aws-sso-clear() {
@@ -221,7 +223,24 @@ aws-sso-clear() {
         return 1
     fi
     eval $(/opt/homebrew/bin/aws-sso ${=_args} eval -c)
+    unset AWS_PROFILE
 }
+
+aws-login() {
+    aws sso login --profile "$1" && export AWS_PROFILE="$1"
+}
+
+aws-logout() {
+    aws sso logout
+    unset AWS_PROFILE
+}
+
+_aws-login-complete() {
+    local profiles
+    profiles=($(aws configure list-profiles 2>/dev/null))
+    compadd -a profiles
+}
+compdef _aws-login-complete aws-login
 
 tkl() {
   tsh kube login $(tsh kube ls -f json | jq -r '.[].kube_cluster_name' | fzf)
@@ -244,6 +263,23 @@ klogs() {
   kubectl logs $(kubectl get pods | fzf | awk '{print $1}')
 }
 
+function gpu() {
+  git push "$@" 2>&1 | tee /dev/tty | grep -o 'https://[^ ]*/pull/new/[^ ]*' | xargs open
+}
+
+function gcb() {
+  local branch
+  branch=$(git branch -a | fzf --height 40% --reverse | sed 's|remotes/origin/||' | tr -d ' ')
+  [[ -n "$branch" ]] && git checkout "$branch"
+}
+
+function gwta() {
+  local branch="${1:?usage: gwta <branch>}"
+  local dir="../ditto-worktrees/${branch#*/}"
+  git worktree add -b "$branch" "$dir"
+  cd "$dir"
+}
+
 compdef __aws_sso_profile_complete aws-sso-profile
 complete -C /opt/homebrew/bin/aws-sso aws-sso
 
@@ -256,4 +292,4 @@ export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 export PATH="/opt/homebrew/bin:/opt/homebrew/opt/ruby/bin:$PATH:$HOME/.local/bin"
 export Z3_LIBRARY_PATH_OVERRIDE=/opt/homebrew/opt/z3/lib
 export Z3_SYS_Z3_HEADER=/opt/homebrew/opt/z3/include/z3.h
-export CARGO_PROFILE_RUST_ANALYZER_INHERITS="dev"
+#export CARGO_PROFILE_RUST_ANALYZER_INHERITS="dev"

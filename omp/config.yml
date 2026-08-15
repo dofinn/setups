@@ -1,0 +1,22 @@
+modelRoles: 
+  default: baseten/zai-org/GLM-5.2:high
+symbolPreset: nerd
+theme: 
+  dark: tokyonight
+  light: light
+setupVersion: 1
+colorBlindMode: false
+statusLine: 
+  transparent: false
+  compactThinkingLevel: false
+  showHookStatus: true
+terminal: 
+  showProgress: false
+tui: 
+  textSizing: false
+hideThinkingBlock: true
+defaultThinkingLevel: auto
+memory: 
+  backend: local
+autolearn: 
+  enabled: true

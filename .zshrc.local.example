@@ -1,0 +1,12 @@
+# .zshrc.local — machine-specific secrets and config (NOT tracked in git)
+# Copy to ~/.zshrc.local and fill in your tokens.
+# This file is sourced by .zshrc if it exists.
+
+# API tokens
+export FIREHYDRANT_API_TOKEN=""
+export LOGSEQ_API_TOKEN=""
+export CHRONOSPHERE_ORG_NAME=""
+export CHRONOSPHERE_API_TOKEN=""
+
+# Ditto license (path to license file on this machine)
+export DITTO_LICENSE=$(cat ~/.config/ditto/license)

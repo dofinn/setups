@@ -48,7 +48,7 @@ create_directories() {
     info "Creating necessary directories..."
     mkdir -p "$SETUP_DIR"
     mkdir -p "$CONFIG_DIR"
-    mkdir -p "$HOME/.local/bin"
+    mkdir -p "$HOME/.omp/agent/themes"
     success "Directories created"
 }
 
@@ -82,29 +82,9 @@ install_packages() {
     if [[ -f "$SETUP_DIR/Brewfile" ]]; then
         brew bundle install --file="$SETUP_DIR/Brewfile"
     else
-        warning "Brewfile not found, installing essential packages directly"
-        # Essential packages
-        brew install --cask ghostty
-        brew install neovim
-        brew install koekeishiya/formulae/yabai
-        brew install koekeishiya/formulae/skhd
-        brew tap FelixKratz/formulae
-        brew install sketchybar
-        brew install font-hack-nerd-font
-
-        # Development tools
-        brew install go
-        brew install rust
-        brew install git
-        brew install ripgrep
-        brew install fzf
-        brew install tree
-        brew install jq
-        brew install gh
-
-        # Optional but useful
-        brew install wget
-        brew install curl
+        error "Brewfile not found at $SETUP_DIR/Brewfile"
+        error "Ensure the repo is fully cloned, then re-run install.sh"
+        return 1
     fi
 
     success "Packages installed"
@@ -200,6 +180,40 @@ setup_symlinks() {
         fi
         success "Linked $(basename "$target")"
     done
+
+    # omp config symlinks (~/.omp/agent/)
+    declare -A omp_symlinks
+    omp_symlinks["$HOME/.omp/agent/config.yml"]="$SETUP_DIR/omp/config.yml"
+    omp_symlinks["$HOME/.omp/agent/mcp.json"]="$SETUP_DIR/omp/mcp.json"
+    omp_symlinks["$HOME/.omp/agent/themes/tokyonight.json"]="$SETUP_DIR/omp/themes/tokyonight.json"
+
+    for target in "${!omp_symlinks[@]}"; do
+        source="${omp_symlinks[$target]}"
+
+        if [[ ! -f "$source" ]]; then
+            warning "$source not found, skipping $(basename "$target")"
+            continue
+        fi
+
+        if [[ -L "$target" && "$(readlink "$target")" == "$source" ]]; then
+            success "$(basename "$target") already linked correctly"
+            continue
+        fi
+
+        if [[ -e "$target" && ! -L "$target" ]]; then
+            warning "Backing up existing $(basename "$target")..."
+            mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
+        fi
+
+        ln -sf "$source" "$target"
+        success "Linked omp $(basename "$target")"
+    done
+
+    # .zshrc.local template (copy if missing, never overwrite)
+    if [[ ! -f "$HOME/.zshrc.local" && -f "$SETUP_DIR/.zshrc.local.example" ]]; then
+        cp "$SETUP_DIR/.zshrc.local.example" "$HOME/.zshrc.local"
+        info "Created ~/.zshrc.local from template — edit it to add your API tokens"
+    fi
 }
 
 # Configure Git (if not already configured)
@@ -295,13 +309,34 @@ start_services() {
     fi
 }
 
+# Setup omp (AI coding agent) — authenticate with Baseten
+setup_omp() {
+    if ! command -v omp >/dev/null 2>&1; then
+        warning "omp not found, skipping omp setup"
+        return
+    fi
+
+    info "Setting up omp (AI coding agent)..."
+
+    # Check if baseten credential already exists
+    if omp token baseten >/dev/null 2>&1; then
+        success "Baseten credential already configured"
+    else
+        warning "Baseten credential not found — interactive login required"
+        info "Run this command manually after the script completes:"
+        info "  omp auth-broker login baseten"
+        info "This opens a browser for OAuth authentication."
+    fi
+
+    success "omp configuration linked"
+}
+
 # Main installation function
 main() {
     echo -e "${BLUE}"
     echo "=================================================="
     echo "  macOS Development Environment Setup"
     echo "=================================================="
-    echo -e "${NC}"
 
     check_macos
     create_directories
@@ -313,6 +348,7 @@ main() {
     install_rust_tools
     setup_zsh
     start_services
+    setup_omp
 
     echo -e "${GREEN}"
     echo "=================================================="
@@ -323,6 +359,8 @@ main() {
     info "Please restart your terminal or run 'source ~/.zshrc' to apply changes"
     info "For yabai, you may need to disable SIP or configure sudoers file"
     info "Sketchybar uses Felix Kratz's exact configuration from your existing setup"
+    info "For omp/baseten: run 'omp auth-broker login baseten' if not yet authenticated"
+    info "Edit ~/.zshrc.local to add your API tokens (see .zshrc.local.example)"
     echo
     success "Your macOS development environment is ready!"
 }

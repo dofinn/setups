@@ -11,6 +11,7 @@ A comprehensive setup script for configuring a new macOS machine with a consiste
 - **SKHD** - Simple hotkey daemon for macOS
 - **SketchyBar** - Custom status bar (using Felix Kratz's exact configuration)
 - **Ghostty** - Fast, feature-rich terminal emulator
+- **omp** - AI coding agent (can1357/tap) configured with Baseten + GLM-5.2
 
 ### Development Languages
 - **Go** - With essential development tools (gopls, delve, staticcheck, etc.)
@@ -30,55 +31,119 @@ A comprehensive setup script for configuring a new macOS machine with a consiste
 - `tmux` - Terminal multiplexer
 - `htop` - Process viewer
 
-### Configuration Management
-- Preserves your existing **Zim** framework setup
-- Maintains your **Spaceship** prompt configuration
-- Uses symbolic links to `~/src/setups/` for easy version control
-- Adds development-specific aliases and functions via `.zshrc.local`
+### omp + Baseten (AI Coding Agent)
+- **omp** installed via `can1357/tap` Homebrew tap
+- Configured to use `baseten/zai-org/GLM-5.2:high` as the default model
+- Linear MCP server configured via OAuth
+- Custom tokyonight theme
+- Config files symlinked from `omp/` directory to `~/.omp/agent/`
 
 ## Quick Start
 
-1. **One-line installation:**
+1. **Clone and run locally:**
    ```bash
-   curl -fsSL https://raw.githubusercontent.com/yourusername/yourrepo/main/install.sh | bash
-   ```
-
-2. **Or clone and run locally:**
-   ```bash
-   git clone <your-repo-url>
-   cd <repo-name>
+   git clone git@github.com:dofinn/setups.git ~/src/setups
+   cd ~/src/setups
    ./install.sh
    ```
+
+2. **After installation, complete the manual steps (see below):**
+   - Authenticate omp with Baseten
+   - Add API tokens to `~/.zshrc.local`
+
+## Post-Installation Manual Steps
+
+The install script handles everything that can be automated. These steps require manual interaction:
+
+### 1. Authenticate omp with Baseten
+
+```bash
+omp auth-broker login baseten
+```
+
+This opens a browser for OAuth authentication. The credential is stored in macOS Keychain. The `omp/config.yml` symlink sets `baseten/zai-org/GLM-5.2:high` as the default model — it will work once the Baseten credential exists.
+
+### 2. Add API tokens to ~/.zshrc.local
+
+The install script creates `~/.zshrc.local` from `.zshrc.local.example` if it doesn't exist. Edit it to add your tokens:
+
+```bash
+vim ~/.zshrc.local
+```
+
+This file is **not tracked in git** (see `.gitignore`). It contains machine-specific secrets:
+- `FIREHYDRANT_API_TOKEN`
+- `LOGSEQ_API_TOKEN`
+- `CHRONOSPHERE_API_TOKEN`
+- `DITTO_LICENSE` (path to license file)
+
+### 3. Restart your terminal
+
+```bash
+source ~/.zshrc
+```
+
+### 4. Configure yabai permissions
+
+- You may need to disable SIP (System Integrity Protection)
+- Or configure sudoers file for passwordless yabai execution
+
+### 5. Verify installations
+
+```bash
+nvim --version
+go version
+cargo --version
+yabai --version
+omp --version
+```
 
 ## Directory Structure
 
 ```
-~/
-├── install.sh                    # Main installation script
-└── src/setups/                   # Configuration files
-    ├── Brewfile                  # Homebrew packages
-    ├── nvim/                     # Neovim configuration
-    ├── yabai/                    # Yabai window manager config
-    ├── skhd/                     # Keyboard shortcuts
-    ├── sketchybar/              # Status bar configuration
-    ├── ghostty/                  # Terminal configuration
-    └── zsh/
-        └── .zshrc.local         # Additional ZSH configuration
+~/src/setups/                       # This repo
+├── install.sh                      # Main installation script
+├── Brewfile                        # Homebrew package list (declarative)
+├── .gitignore                      # Excludes secrets, backups, nvim cache
+├── .zshrc                          # ZSH config (tracked, no secrets)
+├── .zsh_alias                      # ZSH aliases (tracked)
+├── .zshrc.local.example            # Template for machine-specific secrets
+├── omp/                            # omp (AI coding agent) config
+│   ├── config.yml                  # Model roles, theme, settings
+│   ├── mcp.json                    # MCP server config (Linear)
+│   └── themes/
+│       └── tokyonight.json         # Custom omp theme
+├── nvim/                           # Neovim configuration
+├── yabai/                          # Yabai window manager config
+├── skhd/                          # Keyboard shortcuts
+├── sketchybar/                     # Status bar configuration
+├── ghostty/                        # Terminal configuration
+├── tmux/                           # tmux config and scripts
+└── scripts/                       # Utility scripts
 ```
 
-## Post-Installation
+## Secrets Management
 
-After running the installation script:
+**Never commit secrets to git.** The repo uses a two-layer pattern:
 
-1. **Restart your terminal** or run `source ~/.zshrc`
-2. **Configure yabai permissions:**
-   - You may need to disable SIP (System Integrity Protection)
-   - Or configure sudoers file for passwordless yabai execution
-3. **Verify installations:**
-   - `nvim --version`
-   - `go version`
-   - `cargo --version`
-   - `yabai --version`
+1. **`.zshrc` (tracked)** — shell config, functions, aliases. No secrets.
+2. **`~/.zshrc.local` (gitignored)** — machine-specific tokens, sourced by `.zshrc` if it exists.
+
+The `.gitignore` excludes:
+- `.zshrc.local` / `*.local`
+- `secrets*`
+- `.env` / `.env.*`
+- `*.bak` / `*.backup.*`
+
+### omp Baseten credential
+
+The Baseten API credential is stored in macOS Keychain (not in any file). To set it up on a new machine:
+
+```bash
+omp auth-broker login baseten
+```
+
+This cannot be automated — it requires browser-based OAuth.
 
 ## Configuration Details
 
@@ -100,17 +165,47 @@ After running the installation script:
 
 ### ZSH Setup
 - **Preserves your existing Zim framework**
-- Adds development-specific paths and aliases via `.zshrc.local`
-- Maintains your Spaceship prompt configuration
-- Includes useful functions for development workflow
+- Adds development-specific paths and aliases via `.zsh_alias`
+- AWS SSO helper functions (`aws-login`, `aws-logout`, `aws-sso-profile`)
+- Git helper functions (`gpu`, `gcb`, `gwta`)
+- Kubernetes helper functions (`tkl`, `klogs`, `klogsf`)
+- Machine-specific secrets via `~/.zshrc.local` (not tracked)
 
-## Customization
+### omp (AI Coding Agent)
+- Default model: `baseten/zai-org/GLM-5.2:high`
+- Theme: tokyonight (custom)
+- Memory backend: local
+- Autolearn: enabled
+- Linear MCP server via OAuth
+- Config symlinked from `omp/` to `~/.omp/agent/`
 
-All configurations are stored in `~/src/setups/` and linked to their respective locations. This allows you to:
+## Syncing to a New Machine
 
-1. Version control your dotfiles
-2. Easily sync across multiple machines
-3. Make changes that persist across reinstalls
+1. **Clone the repo:**
+   ```bash
+   git clone git@github.com:dofinn/setups.git ~/src/setups
+   ```
+
+2. **Run the install script:**
+   ```bash
+   cd ~/src/setups && ./install.sh
+   ```
+
+3. **Authenticate omp with Baseten:**
+   ```bash
+   omp auth-broker login baseten
+   ```
+
+4. **Create ~/.zshrc.local with your tokens:**
+   ```bash
+   cp ~/src/setups/.zshrc.local.example ~/.zshrc.local
+   vim ~/.zshrc.local  # fill in your API tokens
+   ```
+
+5. **Restart your terminal:**
+   ```bash
+   source ~/.zshrc
+   ```
 
 ## Troubleshooting
 
@@ -124,7 +219,13 @@ All configurations are stored in `~/src/setups/` and linked to their respective 
 
 ### ZSH Issues
 - **Prompt not appearing**: Ensure Spaceship prompt is properly installed in your Zim setup
-- **Aliases not working**: Check that `.zshrc.local` is being sourced
+- **Aliases not working**: Check that `.zsh_alias` is being sourced (it is sourced by `.zshrc`)
+- **Secrets not loading**: Ensure `~/.zshrc.local` exists and contains your tokens
+
+### omp Issues
+- **Model not working**: Run `omp auth-broker login baseten` to authenticate
+- **Config not loading**: Check that `~/.omp/agent/config.yml` is symlinked to the repo
+- **Check current model**: `omp config get modelRoles`
 
 ## Contributing
 
